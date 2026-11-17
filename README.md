@@ -7,20 +7,6 @@ LuaObf compiles source into a custom register-based instruction format and gener
 ## Video demo
 https://github.com/user-attachments/assets/78b30248-c904-4dba-8ea0-97c4aa391790
 
-## Features
-
-| Feature | Implementation |
-| Custom compiler | Parses source using Luau AST tooling and compiles it into a register-based intermediate representation. 
-| Polymorphic instruction set | Randomizes opcode IDs, operand permutations, and operand masks, with duplicate variants for selected instructions. 
-| Generated virtual machine | Produces a Luau VM with a binary-search-tree instruction dispatcher. 
-| Execution-dependent decoding | Uses evolving runtime state to decode instruction words and transition between basic blocks. 
-| Control-flow obfuscation | Shuffles basic blocks and adds opaque predicates, decoy blocks, and decoy instruction handlers. 
-| Encrypted string vault | Stores encrypted strings and reconstructs decoding seeds through VM instructions. 
-| Constant protection | Scrambles constant pools and supports constant splitting and runtime-dependent constant expressions. 
-| Payload packing | Applies payload encryption, randomized section ordering, and a custom, permuted Radix-85 encoding. 
-| Bit operation virtualization | Converts selected direct `bit32` calls into VM instructions. 
-| Runtime checks | Includes optional checks tied to runtime decoding state. 
-
 ### Requirements
 
 - Node.js 18 or later, as specified in `package.json`.
