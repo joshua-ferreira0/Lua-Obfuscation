@@ -56,12 +56,6 @@ console.log(result.stats);
 
 Lua 5.1 is the primary target, with Roblox Luau support. The build pipeline uses Luau tooling; language features and host APIs should be checked with the scripts and runtime you intend to use.
 
-## Development and testing
-
-This project was created with **AI assistance and code beautification tools**.
-
-An earlier version of the obfuscated output was decompiled using **ChatGPT's 6.2 Ultra model**. I personally patched the weaknesses exposed by that attempt and used the findings to improve the obfuscator.
-
 ## Feedback
 
 Feedback on language compatibility, runtime behavior, and the compiler or VM architecture is welcome. When reporting a problem, include a minimal source example, the preset used, the target runtime, and the expected behavior.
