@@ -1,0 +1,13 @@
+{
+  "name": "luaobf",
+  "version": "1.0.0",
+  "description": "LuaObf Polymorphic Lua / Luau Obfuscator — Created by Joshua Ferreira",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

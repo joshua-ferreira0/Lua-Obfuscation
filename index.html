@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LuaObf — Created by Joshua Ferreira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <div class="main-layout">
+      <!-- Options Sidebar -->
+      <aside class="options-panel reveal-item" style="--delay: 0.08s" aria-label="Obfuscation Options">
+        <div class="panel-section">
+          <div class="section-heading">Protection Preset</div>
+          <div class="preset-grid" role="radiogroup" aria-label="Protection Preset">
+            <button type="button" class="preset-pill" data-preset="low">Low</button>
+            <button type="button" class="preset-pill" data-preset="medium">Medium</button>
+            <button type="button" class="preset-pill active" data-preset="high">High</button>
+            <button type="button" class="preset-pill" data-preset="extra_high">Extra High</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-heading">Virtualization &amp; Crypto Passes</div>
+          <div class="toggle-list">
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Polymorphic Duplicate Ops</span>
+                <span class="toggle-sub">Multiple mutated handlers per hot op</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optDuplicateOps" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Operand Permute &amp; XOR Mask</span>
+                <span class="toggle-sub">Randomize (X,Y,Z) slots + 16-bit masks</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optMaskOperands" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">CFG Basic-Block Scrambling</span>
+                <span class="toggle-sub">Shuffle physical bytecode block order</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optShuffleBlocks" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Opaque Predicates &amp; Decoys</span>
+                <span class="toggle-sub">Bitwise invariants + dead bogus blocks</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optOpaque" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Salted T[] Constant Obfuscation</span>
+                <span class="toggle-sub">Runtime ARX salt table defeats static folding</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optMBA" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Constant &amp; Vault Shattering</span>
+                <span class="toggle-sub">Split integers &amp; keyless register-seeded strings</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optSplitConstants" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Virtualize bit32 Intrinsics</span>
+                <span class="toggle-sub">Lower bit32 calls into polymorphic VM opcodes</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optVirtualizeBit32" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Constant Pool Scrambling</span>
+                <span class="toggle-sub">Shuffle K[] + inject decoy strings</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optScrambleK" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Decoy BST Trap Handlers</span>
+                <span class="toggle-sub">Fake VM opcodes in dispatch tree</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optDecoyHandlers" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+
+            <label class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-name">Silent Anti-Tamper &amp; Hook Bind</span>
+                <span class="toggle-sub">Binds line-delta &amp; [C] check to CFB key</span>
+              </div>
+              <input type="checkbox" class="switch-input" id="optAntiTamper" checked />
+              <span class="switch-track" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-heading">Output Naming &amp; Seed</div>
+          <div class="field-group">
+            <label for="optIdStyle">VM Variable Naming Style</label>
+            <select id="optIdStyle" class="control-select full-width">
+              <option value="luaobf" selected>Compact (Randomized Base53)</option>
+              <option value="il1">Homoglyph Confusion (Il1_I1l)</option>
+              <option value="hex">Hexadecimal (_0x4f9a)</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="optSeed">Custom Build Seed (optional)</label>
+            <input type="text" id="optSeed" class="control-input" placeholder="Random 256-bit CSPRNG every build" />
+          </div>
+        </div>
+      </aside>
+
+      <!-- Workspace Area -->
+      <main class="workspace-area">
+        <div class="error-banner" id="errorBanner" role="alert"></div>
+
+        <!-- Two Side-by-Side Textboxes -->
+        <section class="editors-grid" aria-label="Lua Editors">
+          <!-- Input Column -->
+          <div class="editor-column reveal-item" style="--delay: 0.12s">
+            <div class="column-header">
+              <label for="lua-input" class="column-title">
+                <span class="status-dot"></span>
+                Input
+              </label>
+              <div class="header-actions">
+                <span class="meta-badge" id="input-stats">0 B</span>
+                <label class="ghost-btn" for="fileUpload" title="Upload .lua or .luau script">Upload</label>
+                <input type="file" id="fileUpload" accept=".lua,.luau,.txt" hidden />
+                <button type="button" class="ghost-btn" id="clear-btn" title="Clear input">Clear</button>
+              </div>
+            </div>
+
+            <div class="editor-card" id="input-card">
+              <textarea
+                id="lua-input"
+                class="code-textarea input-textarea"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                placeholder="print(&quot;hello world&quot;)"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Output Column -->
+          <div class="editor-column reveal-item" style="--delay: 0.18s">
+            <div class="column-header">
+              <div class="output-label-group">
+                <label for="lua-output" class="column-title">
+                  <span class="status-dot output-dot" id="output-dot"></span>
+                  Output
+                </label>
+                <span class="meta-badge" id="outMeta">Ready</span>
+              </div>
+
+              <div class="output-controls">
+                <button type="button" class="ghost-btn" id="toggleIsaBtn" title="View Polymorphic ISA Opcode Table">ISA Map</button>
+                <button type="button" class="ghost-btn" id="copy-btn" title="Copy obfuscated code">
+                  <span id="copy-label">Copy</span>
+                </button>
+                <button type="button" class="ghost-btn" id="downloadBtn" title="Download obfuscated .lua file">Download</button>
+
+                <button type="button" class="obfuscate-btn" id="obfuscate-btn">
+                  <span class="btn-shimmer" aria-hidden="true"></span>
+                  <svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  </svg>
+                  <span class="btn-spinner" aria-hidden="true"></span>
+                  <span class="btn-text" id="obfuscateBtnText">Obfuscate</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="editor-card output-card" id="output-card">
+              <div class="scan-beam" id="scan-beam" aria-hidden="true"></div>
+              <textarea
+                id="lua-output"
+                class="code-textarea output-textarea"
+                readonly
+                spellcheck="false"
+                placeholder="-- Obfuscated Lua output will appear here..."
+              ></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Build Telemetry Stats Bar -->
+        <section class="stats-bar reveal-item" style="--delay: 0.22s" aria-label="Compilation Statistics">
+          <div class="stat-card">
+            <div class="stat-label">Compile Time</div>
+            <div class="stat-val" id="stTime">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Output Size</div>
+            <div class="stat-val" id="stSize">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Prototypes</div>
+            <div class="stat-val" id="stProtos">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">VM Instructions</div>
+            <div class="stat-val" id="stInsts">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">BST Opcodes</div>
+            <div class="stat-val" id="stOps">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Container Schema</div>
+            <div class="stat-val stat-schema" id="stSchema">—</div>
+          </div>
+        </section>
+
+        <!-- Polymorphic ISA Drawer -->
+        <section class="drawer" id="isaDrawer" aria-label="Polymorphic ISA Table">
+          <div class="drawer-header">
+            <h3 class="drawer-title">
+              Generated Per-Build Polymorphic ISA Table
+              <span class="meta-badge" id="isaSeedLabel">No build yet</span>
+            </h3>
+            <button type="button" class="ghost-btn" id="closeIsaBtn">Close</button>
+          </div>
+          <div class="isa-table-wrap">
+            <table class="isa-table">
+              <thead>
+                <tr>
+                  <th>Hex Op</th>
+                  <th>Semantic Micro-Op</th>
+                  <th>Slot Perm (A,B,C)</th>
+                  <th>16-Bit Operand XOR Masks</th>
+                </tr>
+              </thead>
+              <tbody id="isaTableBody">
+                <tr>
+                  <td colspan="4" class="empty-row">Obfuscate a script to inspect its generated per-build ISA table.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer class="credit-footer reveal-item" style="--delay: 0.26s">
+          <span class="credit-pill">Created by <strong>Joshua Ferreira</strong></span>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
